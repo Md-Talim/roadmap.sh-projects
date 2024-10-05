@@ -49,6 +49,7 @@ def update_task(id: int, new_description: str):
     for task in tasks:
         if task["id"] == id:
             task["description"] = new_description
+            task["updatedAt"] = str(datetime.now())
             save_tasks(tasks)
             print(f"Task with ID {id} got updated.")
             return
