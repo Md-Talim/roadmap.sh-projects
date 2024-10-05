@@ -46,6 +46,10 @@ def add_task(description: str):
 def update_task(id: int, new_description: str):
     tasks: list[dict[str, Any]] = load_tasks()
 
+    if not tasks:
+        print("There are currently no tasks to update.")
+        return
+
     for task in tasks:
         if task["id"] == id:
             task["description"] = new_description
@@ -59,6 +63,10 @@ def update_task(id: int, new_description: str):
 
 def delete_task(id: int):
     tasks: list[dict[str, Any]] = load_tasks()
+
+    if not tasks:
+        print("There are currently no tasks to delete.")
+        return
 
     for i, task in enumerate(tasks):
         if task["id"] == id:
