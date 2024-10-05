@@ -56,6 +56,19 @@ def update_task(id: int, new_description: str):
     print(f"No task found with ID: {id}")
 
 
+def delete_task(id: int):
+    tasks: list[dict[str, Any]] = load_tasks()
+
+    for i, task in enumerate(tasks):
+        if task["id"] == id:
+            del tasks[i]
+            save_tasks(tasks)
+            print(f"Task with ID {id} has been successfully deleted.")
+            return
+
+    print(f"Task with ID {id} not found.")
+
+
 if __name__ == "__main__":
     user_command = input()
 
@@ -73,3 +86,6 @@ if __name__ == "__main__":
 
         task_id = int(splitted_command[0].split(" ")[1])
         update_task(task_id, new_description)
+    elif action == "delete":
+        task_id = int(user_command[space_index + 1 :])
+        delete_task(task_id)
