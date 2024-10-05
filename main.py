@@ -43,6 +43,19 @@ def add_task(description: str):
     print(f"New task with ID {task_id} added.")
 
 
+def update_task(id: int, new_description: str):
+    tasks: list[dict[str, Any]] = load_tasks()
+
+    for task in tasks:
+        if task["id"] == id:
+            task["description"] = new_description
+            save_tasks(tasks)
+            print(f"Task with ID {id} got updated.")
+            return
+
+    print(f"No task found with ID: {id}")
+
+
 if __name__ == "__main__":
     user_command = input()
 
@@ -52,3 +65,11 @@ if __name__ == "__main__":
     if action == "add":
         task = user_command[space_index + 2 : -1]
         add_task(description=task)
+    elif action == "update":
+        splitted_command = user_command.split(' "')
+
+        new_description = splitted_command[1]
+        new_description = new_description[:-1]
+
+        task_id = int(splitted_command[0].split(" ")[1])
+        update_task(task_id, new_description)
