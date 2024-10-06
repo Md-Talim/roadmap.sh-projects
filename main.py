@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Any
 
 file_path = "tasks.json"
+TASK_STATUS = ["todo", "in-progress", "done"]
 
 
 def load_tasks() -> list[dict[str, Any]]:
@@ -78,6 +79,30 @@ def delete_task(id: int):
     print(f"Task with ID {id} not found.")
 
 
+def update_task_status(task_id: int, new_status: str):
+    tasks: list[dict[str, Any]] = load_tasks()
+
+    if not tasks:
+        print("There are currently no tasks to update.")
+        return
+
+    if new_status in TASK_STATUS:
+        for task in tasks:
+            if task["id"] == task_id:
+                old_status = task["status"]
+                task["status"] = new_status
+                save_tasks(tasks)
+                print(
+                    f"Task '{task['description']}' (ID: {task_id}) status updated from '{old_status}' to '{new_status}'."
+                )
+                return
+        print(f"No task found with ID: {task_id}.")
+    else:
+        print(
+            "Invalid status. Please enter one of the following: 'todo', 'in-progress', or 'done'."
+        )
+
+
 if __name__ == "__main__":
     user_command = input()
 
@@ -98,3 +123,9 @@ if __name__ == "__main__":
     elif action == "delete":
         task_id = int(user_command[space_index + 1 :])
         delete_task(task_id)
+    elif action == "mark-in-progress":
+        task_id = int(user_command[space_index + 1 :])
+        update_task_status(task_id, "in-progress")
+    elif action == "mark-done":
+        task_id = int(user_command[space_index + 1 :])
+        update_task_status(task_id, "done")
