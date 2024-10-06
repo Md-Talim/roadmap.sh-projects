@@ -130,38 +130,45 @@ def list_tasks(status: str):
 
 
 if __name__ == "__main__":
-    user_command = input()
+    user_command = input("task-cli ")
 
-    action = "list"
-    space_index = user_command.find(" ")
+    while user_command != "exit":
+        action = "list"
+        space_index = user_command.find(" ")
 
-    if space_index != -1:
-        action = user_command[:space_index]
+        if space_index != -1:
+            action = user_command[:space_index]
+        if space_index != -1:
+            action = user_command[:space_index]
 
-    if action == "add":
-        task = user_command[space_index + 2 : -1]
-        add_task(description=task)
-    elif action == "update":
-        splitted_command = user_command.split(' "')
+        if action == "add":
+            task = user_command[space_index + 2 : -1]
+            add_task(description=task)
+        elif action == "update":
+            splitted_command = user_command.split(' "')
 
-        new_description = splitted_command[1]
-        new_description = new_description[:-1]
+            new_description = splitted_command[1]
+            new_description = new_description[:-1]
 
-        task_id = int(splitted_command[0].split(" ")[1])
-        update_task(task_id, new_description)
-    elif action == "delete":
-        task_id = int(user_command[space_index + 1 :])
-        delete_task(task_id)
-    elif action == "mark-in-progress":
-        task_id = int(user_command[space_index + 1 :])
-        update_task_status(task_id, "in-progress")
-    elif action == "mark-done":
-        task_id = int(user_command[space_index + 1 :])
-        update_task_status(task_id, "done")
-    elif action == "list":
-        status = ""
+            task_id = int(splitted_command[0].split(" ")[1])
+            update_task(task_id, new_description)
+        elif action == "delete":
+            task_id = int(user_command[space_index + 1 :])
+            delete_task(task_id)
+        elif action == "mark-in-progress":
+            task_id = int(user_command[space_index + 1 :])
+            update_task_status(task_id, "in-progress")
+        elif action == "mark-done":
+            task_id = int(user_command[space_index + 1 :])
+            update_task_status(task_id, "done")
+        elif action == "list":
+            status = ""
 
-        if " " in user_command:
-            status = user_command.split(" ")[1]
+            if " " in user_command:
+                status = user_command.split(" ")[1]
 
-        list_tasks(status)
+            list_tasks(status)
+        elif action == "exit":
+            exit(0)
+
+        user_command = input("task-cli ")
