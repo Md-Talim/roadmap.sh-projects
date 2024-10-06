@@ -103,11 +103,40 @@ def update_task_status(task_id: int, new_status: str):
         )
 
 
+def list_tasks(status: str):
+    tasks: list[dict[str, Any]] = load_tasks()
+
+    if not tasks:
+        print("There are currently no tasks to print.")
+        return
+
+    if status and status not in TASK_STATUS:
+        print(f"Invalid status '{status}'. Please use one of: {', '.join(TASK_STATUS)}")
+        return
+
+    status_emojis = {"todo": "📝", "in-progress": "⏳", "done": "✅"}
+    tasks_to_print = [task for task in tasks if task["status"] == status or not status]
+
+    if tasks_to_print:
+        for task in tasks_to_print:
+            emoji = status_emojis.get(task["status"], "")
+            print(f"{emoji} {task['description']} (ID: {task['id']})")
+    else:
+        print(
+            f"No tasks found with status '{status}'."
+            if status
+            else "No tasks available."
+        )
+
+
 if __name__ == "__main__":
     user_command = input()
 
+    action = "list"
     space_index = user_command.find(" ")
-    action = user_command[:space_index]
+
+    if space_index != -1:
+        action = user_command[:space_index]
 
     if action == "add":
         task = user_command[space_index + 2 : -1]
@@ -129,3 +158,10 @@ if __name__ == "__main__":
     elif action == "mark-done":
         task_id = int(user_command[space_index + 1 :])
         update_task_status(task_id, "done")
+    elif action == "list":
+        status = ""
+
+        if " " in user_command:
+            status = user_command.split(" ")[1]
+
+        list_tasks(status)
