@@ -3,23 +3,23 @@ import os
 from datetime import datetime
 from typing import Any
 
-file_path = "tasks.json"
+FILE_PATH = "tasks.json"
 TASK_STATUS = ["todo", "in-progress", "done"]
 
 
 def load_tasks() -> list[dict[str, Any]]:
-    if os.path.exists(file_path):
-        with open(file_path, "r") as file:
+    if os.path.exists(FILE_PATH):
+        with open(FILE_PATH, "r") as file:
             tasks: list[dict[str, Any]] = json.load(file)
             return tasks
     else:
-        with open(file_path, "w") as file:
+        with open(FILE_PATH, "w") as file:
             json.dump([], file, indent=4)
             return []
 
 
 def save_tasks(tasks: list[dict[str, Any]]):
-    with open(file_path, "w") as file:
+    with open(FILE_PATH, "w") as file:
         json.dump(tasks, file, indent=4)
 
 
