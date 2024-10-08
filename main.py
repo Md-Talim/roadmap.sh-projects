@@ -138,8 +138,6 @@ if __name__ == "__main__":
 
         if space_index != -1:
             action = user_command[:space_index]
-        if space_index != -1:
-            action = user_command[:space_index]
 
         if action == "add":
             task = user_command[space_index + 2 : -1]
