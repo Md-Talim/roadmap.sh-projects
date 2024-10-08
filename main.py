@@ -149,6 +149,7 @@ def update_task_status(task_id: int, new_status: str):
     if task:
         old_status = task["status"]
         task["status"] = new_status
+        task["updatedAt"] = str(datetime.now())
         save_tasks(tasks)
         print(f"Task {task_id} status updated from '{old_status}' to '{new_status}'.")
     else:
