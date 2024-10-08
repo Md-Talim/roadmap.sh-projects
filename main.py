@@ -8,24 +8,33 @@ TASK_STATUS = ["todo", "in-progress", "done"]
 
 
 def load_tasks() -> list[dict[str, Any]]:
+    """
+    Loads tasks from the JSON file.
+
+    If the file exists, it reads and returns the list of tasks. If the file
+    does not exist, it creates an empty file and returns an empty list.
+    """
     if os.path.exists(FILE_PATH):
-        with open(FILE_PATH, "r") as file:
+        with open(FILE_PATH, "r", encoding="UTF-8") as file:
             tasks: list[dict[str, Any]] = json.load(file)
             return tasks
     else:
-        with open(FILE_PATH, "w") as file:
+        with open(FILE_PATH, "w", encoding="UTF-8") as file:
             json.dump([], file, indent=4)
             return []
 
 
 def save_tasks(tasks: list[dict[str, Any]]):
-    with open(FILE_PATH, "w") as file:
+    """
+    Saves the current list of tasks to the JSON file.
+    """
+    with open(FILE_PATH, "w", encoding="UTF-8") as file:
         json.dump(tasks, file, indent=4)
 
 
 def find_task_by_id(tasks: list[dict[str, Any]], task_id: int) -> dict[str, Any] | None:
     """
-    Find task by id using binary search.
+    Finds task by id using binary search.
     """
     high = len(tasks) - 1
     low = 0
@@ -46,6 +55,9 @@ def find_task_by_id(tasks: list[dict[str, Any]], task_id: int) -> dict[str, Any]
 
 
 def add_task(description: str):
+    """
+    Add a new task to the task list.
+    """
     tasks: list[dict[str, Any]] = load_tasks()
     task_id: int = 0
 
@@ -67,6 +79,11 @@ def add_task(description: str):
 
 
 def update_task(task_id: int, new_description: str):
+    """
+    Updates the description of a task by its ID.
+
+    If the task exists, its description is updated, and the `updatedAt` timestamp is refreshed.
+    """
     tasks: list[dict[str, Any]] = load_tasks()
 
     if not tasks:
@@ -85,6 +102,11 @@ def update_task(task_id: int, new_description: str):
 
 
 def delete_task(task_id: int):
+    """
+    Deletes a task by its `ID`.
+
+    If the task with the given ID exists, it is removed from the task list.
+    """
     tasks: list[dict[str, Any]] = load_tasks()
 
     if not tasks:
@@ -102,6 +124,16 @@ def delete_task(task_id: int):
 
 
 def update_task_status(task_id: int, new_status: str):
+    """
+    Updates the status of a task by its `ID`.
+
+    The task status can be updated to:
+    - `todo`
+    - `in-progress`
+    - `done`.
+
+    If the task exists, its status is updated, and the `updatedAt` timestamp is refreshed.
+    """
     tasks: list[dict[str, Any]] = load_tasks()
 
     if not tasks:
@@ -124,6 +156,11 @@ def update_task_status(task_id: int, new_status: str):
 
 
 def list_tasks(status: str):
+    """
+    List tasks with a specific status or all tasks.
+    Filters tasks based on the status (`todo`, `in-progress`, or `done`)
+    Lists all tasks if no status is provided.
+    """
     tasks: list[dict[str, Any]] = load_tasks()
 
     if not tasks:
