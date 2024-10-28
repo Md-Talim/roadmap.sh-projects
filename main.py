@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime
 from typing import Any
+import argparse
 
 FILE_PATH = "tasks.json"
 TASK_STATUS = ["todo", "in-progress", "done"]
@@ -199,46 +200,55 @@ def main():
     """
     The main entry point for the task CLI application.
     """
-    user_command = input("task-cli ")
+    parser = argparse.ArgumentParser(description="Task management CLI")
 
-    while user_command != "exit":
-        action = "list"
-        space_index = user_command.find(" ")
+    # Create subparsers for individual commands
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
-        if space_index != -1:
-            action = user_command[:space_index]
+    # Add subcommand
+    add_parser = subparsers.add_parser("add", help="Add a new task")
+    add_parser.add_argument("description", type=str, help="Description of the task")
 
-        if action == "add":
-            task = user_command[space_index + 2 : -1]
-            add_task(description=task)
-        elif action == "update":
-            splitted_command = user_command.split(' "')
+    # Update subcommand
+    update_parser = subparsers.add_parser("update", help="Update an existing task")
+    update_parser.add_argument("task_id", type=int, help="ID of the task to update")
+    update_parser.add_argument("description", type=str, help="New task description")
 
-            new_description = splitted_command[1]
-            new_description = new_description[:-1]
+    # Delete subcommand
+    delete_parser = subparsers.add_parser("delete", help="Delete a task")
+    delete_parser.add_argument("task_id", type=int, help="ID of the task to delete")
 
-            task_id = int(splitted_command[0].split(" ")[1])
-            update_task(task_id, new_description)
-        elif action == "delete":
-            task_id = int(user_command[space_index + 1 :])
-            delete_task(task_id)
-        elif action == "mark-in-progress":
-            task_id = int(user_command[space_index + 1 :])
-            update_task_status(task_id, "in-progress")
-        elif action == "mark-done":
-            task_id = int(user_command[space_index + 1 :])
-            update_task_status(task_id, "done")
-        elif action == "list":
-            status = ""
+    # Mark in-progress subcommand
+    mark_in_progress_parser = subparsers.add_parser(
+        "mark-in-progress", help="Mark task as in-progress"
+    )
+    mark_in_progress_parser.add_argument("task_id", type=int, help="ID of the task")
 
-            if " " in user_command:
-                status = user_command.split(" ")[1]
+    # Mark done subcommand
+    mark_done_parser = subparsers.add_parser("mark-done", help="Mark task as done")
+    mark_done_parser.add_argument("task_id", type=int, help="ID of the task")
 
-            list_tasks(status)
-        elif action == "exit":
-            exit(0)
+    # List subcommand
+    list_parser = subparsers.add_parser("list", help="List tasks")
+    list_parser.add_argument(
+        "status", type=str, nargs="?", default="", help="Filter tasks by status"
+    )
 
-        user_command = input("task-cli ")
+    args = parser.parse_args()
+
+    # Handle commands
+    if args.command == "add":
+        add_task(args.description)
+    elif args.command == "update":
+        update_task(args.task_id, args.description)
+    elif args.command == "delete":
+        delete_task(args.task_id)
+    elif args.command == "mark-in-progress":
+        update_task_status(args.task_id, "in-progress")
+    elif args.command == "mark-done":
+        update_task_status(args.task_id, "done")
+    elif args.command == "list":
+        list_tasks(args.status)
 
 
 if __name__ == "__main__":
