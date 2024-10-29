@@ -7,6 +7,7 @@ This repository contains projects from [roadmap.sh](https://roadmap.sh/).
 ### Frontend Projects
 
 - [x] [Single-Page CV](https://roadmap.sh/projects/single-page-cv)
+- [x] [Basic HTML Website](https://roadmap.sh/projects/basic-html-website)
 
 ### Backend Projects
 
