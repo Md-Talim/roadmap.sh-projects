@@ -12,3 +12,4 @@ This repository contains projects from [roadmap.sh](https://roadmap.sh/).
 ### Backend Projects
 
 - [x] [Task Tracker](https://roadmap.sh/projects/task-tracker)
+- [x] [GitHub User Activity](https://roadmap.sh/projects/github-user-activity)
