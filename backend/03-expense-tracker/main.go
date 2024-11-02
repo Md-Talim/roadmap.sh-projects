@@ -61,6 +61,20 @@ func addExpense(description string, amount float64) {
 	fmt.Printf("Expense added successfully (ID: %d)\n", id)
 }
 
+func listExpenses() {
+	expenses := loadExpenses()
+
+	if len(expenses) == 0 {
+		fmt.Println("There are no entries.")
+		return
+	}
+
+	fmt.Printf("%-3s %-15s %-20s %s\n", "ID", "Date", "Description", "Amount")
+	for _, expense := range expenses {
+		fmt.Printf("%-3d %-15s %-20s $%.2f\n", expense.ID, expense.Date.Format("2006-01-02"), expense.Description, expense.Amount)
+	}
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Invalid format!")
@@ -78,6 +92,8 @@ func main() {
 		addCmd.Parse(os.Args[2:])
 
 		addExpense(*description, *amount)
+	case "list":
+		listExpenses()
 	default:
 		fmt.Println("Enter a valid action!")
 	}
