@@ -75,6 +75,43 @@ func listExpenses() {
 	}
 }
 
+func deleteExpense(id int) {
+    if id == -1 {
+        fmt.Println("Please enter the ID of the extpense to delete.")
+        return
+    }
+
+	expenses := loadExpenses()
+
+	if len(expenses) == 0 {
+		fmt.Println("There are no entries.")
+		return
+	}
+
+    expenseIndex := -1
+    for index, expense := range expenses {
+        if expense.ID == id{
+            expenseIndex = index
+        }
+    }
+
+    if expenseIndex == -1 {
+        fmt.Printf("Expense with ID: %d not found!", id)
+        return
+    }
+
+    expenses = append(expenses[:expenseIndex], expenses[expenseIndex+1:]...)
+
+    updatedExpenses, err := json.MarshalIndent(expenses, "", "    ")
+    if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		return
+    }
+
+    saveExpenses(updatedExpenses)
+    fmt.Printf("Expense with ID: %d deleted!\n", id)
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Invalid format!")
@@ -86,7 +123,7 @@ func main() {
 	switch action {
 	case "add":
 		addCmd := flag.NewFlagSet("add", flag.ExitOnError)
-		description := addCmd.String("description", "", "Description of the transation")
+		description := addCmd.String("description", "", "Description of the transaction")
 		amount := addCmd.Float64("amount", 0.0, "Amount for the transaction.")
 
 		addCmd.Parse(os.Args[2:])
@@ -94,6 +131,11 @@ func main() {
 		addExpense(*description, *amount)
 	case "list":
 		listExpenses()
+	case "delete":
+        deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
+        id := deleteCmd.Int("id", -1, "ID of the task to delete")
+        deleteCmd.Parse(os.Args[2:])
+        deleteExpense(*id)
 	default:
 		fmt.Println("Enter a valid action!")
 	}
