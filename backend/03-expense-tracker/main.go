@@ -76,10 +76,10 @@ func listExpenses() {
 }
 
 func deleteExpense(id int) {
-    if id == -1 {
-        fmt.Println("Please enter the ID of the extpense to delete.")
-        return
-    }
+	if id == -1 {
+		fmt.Println("Please enter the ID of the extpense to delete.")
+		return
+	}
 
 	expenses := loadExpenses()
 
@@ -88,40 +88,60 @@ func deleteExpense(id int) {
 		return
 	}
 
-    expenseIndex := -1
-    for index, expense := range expenses {
-        if expense.ID == id{
-            expenseIndex = index
-        }
-    }
+	expenseIndex := -1
+	for index, expense := range expenses {
+		if expense.ID == id {
+			expenseIndex = index
+		}
+	}
 
-    if expenseIndex == -1 {
-        fmt.Printf("Expense with ID: %d not found!", id)
-        return
-    }
+	if expenseIndex == -1 {
+		fmt.Printf("Expense with ID: %d not found!", id)
+		return
+	}
 
-    expenses = append(expenses[:expenseIndex], expenses[expenseIndex+1:]...)
+	expenses = append(expenses[:expenseIndex], expenses[expenseIndex+1:]...)
 
-    updatedExpenses, err := json.MarshalIndent(expenses, "", "    ")
-    if err != nil {
+	updatedExpenses, err := json.MarshalIndent(expenses, "", "    ")
+	if err != nil {
 		fmt.Println("Error marshalling JSON:", err)
 		return
-    }
+	}
 
-    saveExpenses(updatedExpenses)
-    fmt.Printf("Expense with ID: %d deleted!\n", id)
+	saveExpenses(updatedExpenses)
+	fmt.Printf("Expense with ID: %d deleted!\n", id)
 }
 
-func showSummary() {
-    expenses := loadExpenses()
+type SummaryOptions struct {
+	Month int
+}
 
-    totalExpense  := 0.0
+var MONTHS = []string{"", "January", "February", "March", "April", "May", "June", "July", "August", "Semptember", "October", "November", "December"}
 
-    for _, expense := range expenses {
-        totalExpense += expense.Amount
-    }
+func showSummary(options *SummaryOptions) {
+	expenses := loadExpenses()
+	totalExpense := 0.0
 
-    fmt.Printf("Total expenses: $%.0f\n", totalExpense)
+	if options.Month == -1 {
+		for _, expense := range expenses {
+			totalExpense += expense.Amount
+		}
+
+		fmt.Printf("Total expenses: $%.0f\n", totalExpense)
+	} else {
+		currentTime := time.Now()
+		currentYear, _, _ := currentTime.Date()
+
+		for _, expense := range expenses {
+			year, month, _ := expense.Date.Date()
+
+			if year == currentYear && MONTHS[options.Month] == month.String() {
+				totalExpense += expense.Amount
+			}
+		}
+
+		fmt.Printf("Total expenses for %s: $%.0f\n", MONTHS[options.Month], totalExpense)
+	}
 }
 
 func main() {
@@ -144,12 +164,15 @@ func main() {
 	case "list":
 		listExpenses()
 	case "delete":
-        deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
-        id := deleteCmd.Int("id", -1, "ID of the expense to delete")
-        deleteCmd.Parse(os.Args[2:])
-        deleteExpense(*id)
-    case "summary":
-        showSummary()
+		deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
+		id := deleteCmd.Int("id", -1, "ID of the expense to delete")
+		deleteCmd.Parse(os.Args[2:])
+		deleteExpense(*id)
+	case "summary":
+		summaryCmd := flag.NewFlagSet("summary", flag.ExitOnError)
+		month := summaryCmd.Int("month", -1, "Name of the month.")
+		summaryCmd.Parse(os.Args[2:])
+		showSummary(&SummaryOptions{Month: *month})
 	default:
 		fmt.Println("Enter a valid action!")
 	}
