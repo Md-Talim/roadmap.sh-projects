@@ -112,6 +112,18 @@ func deleteExpense(id int) {
     fmt.Printf("Expense with ID: %d deleted!\n", id)
 }
 
+func showSummary() {
+    expenses := loadExpenses()
+
+    totalExpense  := 0.0
+
+    for _, expense := range expenses {
+        totalExpense += expense.Amount
+    }
+
+    fmt.Printf("Total expenses: $%.0f\n", totalExpense)
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Invalid format!")
@@ -133,9 +145,11 @@ func main() {
 		listExpenses()
 	case "delete":
         deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
-        id := deleteCmd.Int("id", -1, "ID of the task to delete")
+        id := deleteCmd.Int("id", -1, "ID of the expense to delete")
         deleteCmd.Parse(os.Args[2:])
         deleteExpense(*id)
+    case "summary":
+        showSummary()
 	default:
 		fmt.Println("Enter a valid action!")
 	}
