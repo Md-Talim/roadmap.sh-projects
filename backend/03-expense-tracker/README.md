@@ -5,11 +5,11 @@ A simple command-line interface (CLI) based Expense Tracker built with Go. This 
 ## Features
 
 -   [x] Add an expense with a description and amount.
--   [] Update an expense.
--   [] Delete an expense.
+-   [x] Update an expense.
+-   [x] Delete an expense.
 -   [x] View all expenses.
--   [] View a summary of all expenses.
--   [] View a summary of expenses for a specific month (of current year).
+-   [x] View a summary of all expenses.
+-   [x] View a summary of expenses for a specific month (of current year).
 
 ## Sample Commands
 
