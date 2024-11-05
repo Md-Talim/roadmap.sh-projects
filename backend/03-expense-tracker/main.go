@@ -144,6 +144,49 @@ func showSummary(options *SummaryOptions) {
 	}
 }
 
+type UpdateOptions struct {
+	newDescription string
+	newAmount      float64
+}
+
+func updateExpense(id int, options *UpdateOptions) {
+	expenses := loadExpenses()
+
+	if len(expenses) == 0 {
+		fmt.Println("There are no entries.")
+		return
+	}
+
+	if id == -1 {
+		fmt.Println("Please provide the id of the expense to udpate.")
+		return
+	}
+
+	for i := range expenses {
+		if expenses[i].ID == id {
+			if options.newAmount != -1 {
+				expenses[i].Amount = options.newAmount
+				expenses[i].Date = time.Now()
+			}
+
+			if options.newDescription != "" {
+				expenses[i].Description = options.newDescription
+				expenses[i].Date = time.Now()
+			}
+			break
+		}
+	}
+
+	updatedExpenses, err := json.MarshalIndent(expenses, "", "    ")
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+		return
+	}
+
+	saveExpenses(updatedExpenses)
+	fmt.Printf("Expense with ID: %d updated!\n", id)
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Invalid format!")
@@ -161,6 +204,13 @@ func main() {
 		addCmd.Parse(os.Args[2:])
 
 		addExpense(*description, *amount)
+	case "update":
+		updateCmd := flag.NewFlagSet("update", flag.ExitOnError)
+		id := updateCmd.Int("id", -1, "Id of the expense to udpate.")
+		newDescription := updateCmd.String("description", "", "New description of the expense")
+		newAmount := updateCmd.Float64("amount", -1, "New amount of the expense")
+		updateCmd.Parse(os.Args[2:])
+		updateExpense(*id, &UpdateOptions{*newDescription, *newAmount})
 	case "list":
 		listExpenses()
 	case "delete":
